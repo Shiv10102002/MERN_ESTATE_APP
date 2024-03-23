@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Oauth from "../component/Oauth";
 function SignUp() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
@@ -72,6 +73,7 @@ function SignUp() {
         >
           {loading ? "Loading..." : "Sign up"}
         </button>
+        <Oauth />
       </form>
       <div className="flex py-3">
         <p> Have an account ? </p>

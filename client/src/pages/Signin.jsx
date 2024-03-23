@@ -6,12 +6,13 @@ import {
   signinFailed,
   signinSuccess,
 } from "../redux/user/usersliec";
+import Oauth from "../component/Oauth";
 function Signin() {
   const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const {loading,error} = useSelector((state)=>state.user);
+  const { loading, error } = useSelector((state) => state.user);
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -69,10 +70,11 @@ function Signin() {
         >
           {loading ? "Loading..." : "Sign In"}
         </button>
+        <Oauth />
       </form>
       <div className="flex py-3">
         <p>Dont Have an account ? </p>
-        <Link to={"/sing-up"}>
+        <Link to={"/sign-up"}>
           <span className="text-blue-700">Sign Up</span>
         </Link>
       </div>
