@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { app } from "../firebase";
 import {
   getStorage,
@@ -7,16 +7,27 @@ import {
   ref,
   getDownloadURL,
 } from "firebase/storage";
+import {
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  updateUserFailure,
+  updateUserStart,
+  updateUserSuccess,
+} from "../redux/user/usersliec";
 function Profile() {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
   const fileRef = useRef(null);
   const [file, setFile] = useState(undefined);
   const [fileperc, setFileperc] = useState(0);
   const [fileuploadError, setFileUploadError] = useState(false);
   const [formdata, setFormdata] = useState({});
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const dispatch = useDispatch();
+
   console.log(formdata);
-  console.log(fileperc);
-  console.log(fileuploadError);
+  // console.log(fileperc);
+  // console.log(fileuploadError);
   const handleFileupload = (file) => {
     const storage = getStorage(app);
     const fileName = new Date().getTime() + file.name;
@@ -42,6 +53,47 @@ function Profile() {
       }
     );
   };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/v1/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formdata),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
+    }
+  };
+  const handleChange = (e) => {
+    setFormdata({ ...formdata, [e.target.id]: e.target.value });
+  };
+  const handleDeleteUSer = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/v1/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
   useEffect(() => {
     if (file) {
       handleFileupload(file);
@@ -50,7 +102,7 @@ function Profile() {
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
-      <form action="" className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           onChange={(e) => setFile(e.target.files[0])}
           type="file"
@@ -79,29 +131,46 @@ function Profile() {
         <input
           type="text"
           placeholder="username"
+          defaultValue={currentUser.username}
           id="username"
           className="border p-3 rounded-lg "
+          onChange={handleChange}
         />
         <input
           type="email"
+          defaultValue={currentUser.email}
           placeholder="email"
           id="email"
           className="border p-3 rounded-lg "
+          onChange={handleChange}
         />
         <input
-          type="text"
+          type="password"
           placeholder="password"
           id="password"
           className="border p-3 rounded-lg "
+          onChange={handleChange}
         />
-        <button className="bg-slate-700 uppercase rounded-lg text-white p-3">
-          update
+        <button
+          disabled={loading}
+          className="bg-slate-700 uppercase rounded-lg text-white p-3"
+        >
+          {loading ? "Loading..." : "Update"}
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
+        <span
+          onClick={handleDeleteUSer}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign Out</span>
       </div>
+      <p className="text-red-700 mt-5">{error ? error : ""}</p>
+      <p className="text-green-700 mt-5">
+        {updateSuccess ? "User is updated successfully" : ""}
+      </p>
     </div>
   );
 }
