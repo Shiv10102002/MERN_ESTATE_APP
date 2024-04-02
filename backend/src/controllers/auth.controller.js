@@ -2,6 +2,8 @@ import { User } from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { errorHandler } from "../utils/error.js";
+
+
 export const signup = async (req, res, next) => {
   console.log(req.body);
 
@@ -64,7 +66,7 @@ export const google = async (req, res, next) => {
           Math.random().toString(36).slice(-4),
         email: req.body.email,
         password: hashedpass,
-        abatar: req.body.photo,
+        avatar: req.body.photo,
       });
       await newUser.save();
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);

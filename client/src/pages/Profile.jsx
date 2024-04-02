@@ -1,12 +1,15 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { app } from "../firebase";
+
+
 import {
   getStorage,
   uploadBytesResumable,
   ref,
   getDownloadURL,
 } from "firebase/storage";
+
 import {
   deleteUserFailure,
   deleteUserStart,
@@ -18,6 +21,8 @@ import {
   updateUserStart,
   updateUserSuccess,
 } from "../redux/user/usersliec";
+
+
 function Profile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const fileRef = useRef(null);
