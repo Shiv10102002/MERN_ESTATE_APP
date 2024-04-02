@@ -21,6 +21,7 @@ import {
   updateUserStart,
   updateUserSuccess,
 } from "../redux/user/usersliec";
+import { Link } from "react-router-dom";
 
 
 function Profile() {
@@ -175,11 +176,18 @@ function Profile() {
         />
         <button
           disabled={loading}
-          className="bg-slate-700 uppercase rounded-lg text-white p-3"
+          className="bg-slate-700 uppercase rounded-lg text-white p-3 hover:opacity-80"
         >
           {loading ? "Loading..." : "Update"}
         </button>
+        <Link
+          to={"/create-listing"}
+          className="bg-green-700 p-3  rounded-lg  text-center uppercase text-white hover:opacity-90"
+        >
+          Create Listing
+        </Link>
       </form>
+
       <div className="flex justify-between mt-5">
         <span
           onClick={handleDeleteUSer}
@@ -191,6 +199,7 @@ function Profile() {
           Sign Out
         </span>
       </div>
+
       <p className="text-red-700 mt-5">{error ? error : ""}</p>
       <p className="text-green-700 mt-5">
         {updateSuccess ? "User is updated successfully" : ""}
