@@ -6,6 +6,7 @@ import {
   getUserListing,
   updateListing,
   getListing,
+  getSearchListings,
 } from "../controllers/listing.controller.js";
 
 const router = express.Router();
@@ -14,6 +15,8 @@ router.get('/listings/:id', verifyToken,getUserListing );
 router.delete('/delete/:id',verifyToken,deleteListing);
 router.post('/update/:id',verifyToken,updateListing);
 router.get("/getListingbyId/:id",  getListing);
+router.get("/getSearchListing", getSearchListings);
+
 
 
 
